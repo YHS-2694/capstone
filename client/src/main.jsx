@@ -5,6 +5,8 @@ import './index.css'
 import App from './App.jsx'
 import Login from './components/login.jsx'
 import Register from './components/register.jsx'
+import Home from './components/home.jsx'
+import AnimeProfile from './components/animeProfile.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/home",
+    element: <Home />,
+  },
+  {
+    path: "/anime/:id", //
+    element: <AnimeProfile />,
   }
 ]);
 
