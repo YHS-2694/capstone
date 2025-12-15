@@ -21,6 +21,6 @@ try {
   console.error(err);
 }
 
-let db = client.db("movies");
+let db = client.db("anime");
 
 export default db;

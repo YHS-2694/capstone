@@ -15,7 +15,7 @@ const loginRouter = express.Router();
 loginRouter.post("/loginCheck", async (req, res) => {
   try {
     // 1. Get the collection
-    const collection = await db.collection("registration");
+    const collection = await db.collection("users");
 
     // 2. Use findOne() to execute the query and retrieve a single document
     // NOTE: This assumes the password in the database is UNSECURELY stored in plaintext.
