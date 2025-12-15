@@ -42,7 +42,7 @@ export async function addingFavorite(animeId, title, imageUrl, userId, token) {
         throw new Error("Authentication required. Cannot add favorite.");
     }
 
-    const url = `http://localhost:5050/anime/addFavorite`;
+    const url = `https://anime-backend-service-152847996728.us-east4.run.app/anime/addFavorite`;
 
     const favoriteData = { userId, animeId, title, imageUrl };
 
@@ -77,7 +77,7 @@ export async function getAllFavorites(userId, token) {
         throw new Error("Authentication required. Cannot fetch favorites.");
     }
 
-    const url = `http://localhost:5050/anime/Favorites/${userId}`;
+    const url = `https://anime-backend-service-152847996728.us-east4.run.app/anime/Favorites/${userId}`;
 
     try {
         const response = await fetch(url, {
@@ -107,7 +107,7 @@ export async function removeFavorite(animeId, userId, token) {
         throw new Error("Authentication required. Cannot remove favorite.");
     }  
 
-    const url = `http://localhost:5050/anime/removeFavorite`;
+    const url = `https://anime-backend-service-152847996728.us-east4.run.app/anime/removeFavorite`;
 
     const removeData = { userId, animeId };
 
@@ -141,7 +141,7 @@ export async function addReview(animeId, reviewText, userId, token, username) {
         throw new Error("User is not logged in. Cannot add review.");
     }  
 
-    const url = `http://localhost:5050/anime/addReview`;
+    const url = `https://anime-backend-service-152847996728.us-east4.run.app/anime/addReview`;
 
     // FIX: Included 'username' in the payload sent to the backend
     const reviewData = { userId, animeId, reviewText, username };
@@ -174,7 +174,7 @@ export async function fetchReviewsByAnimeId(animeId) {
         throw new Error("Anime ID is required to fetch reviews.");
     }
 
-    const url = `http://localhost:5050/anime/getReviews/${animeId}`; 
+    const url = `https://anime-backend-service-152847996728.us-east4.run.app/anime/getReviews/${animeId}`; 
 
     try {
         const response = await fetch(url, {

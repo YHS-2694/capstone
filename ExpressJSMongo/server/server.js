@@ -1,10 +1,11 @@
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
 import records from "./routes/record.js";
 import logins from "./routes/login.js";
 import register from "./routes/register.js";
 import animeData from "./routes/animeData.js";
-import "dotenv/config";
+
 
 const app = express();
 
