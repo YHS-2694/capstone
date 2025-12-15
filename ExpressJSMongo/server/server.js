@@ -4,6 +4,7 @@ import records from "./routes/record.js";
 import logins from "./routes/login.js";
 import register from "./routes/register.js";
 import animeData from "./routes/animeData.js";
+import "dotenv/config";
 
 const app = express();
 
