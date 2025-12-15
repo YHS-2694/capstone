@@ -4,9 +4,11 @@ import React, { useRef, useEffect } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { fetchTopAnime } from '../services/animeServices.jsx';
 import Navbar from './navbar.jsx';
+// FIX: Using 'react-router'
 import { Link } from "react-router"; 
 import { useMachine } from '@xstate/react';
 import { animeGalleryMachine } from '../stateMachines/animeGalleryMachine.jsx';
+import './animation.css';
 
 
 // --- Configuration ---
@@ -37,33 +39,27 @@ const Home = () => {
     const isLoadingMore =
         isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === 'undefined');
 
-    // --- EFFECT 1: Synchronization between SWR status and XState (Fixed send calls) ---
+    // --- EFFECT 1: Synchronization between SWR status and XState ---
     useEffect(() => {
-        // If SWR has finished loading a batch (initial or subsequent)
         if (!isLoadingMore && !isLoadingInitialData) {
             if (isReachingEnd) {
-                // FIX: Send event object
                 send({ type: 'END_REACHED' }); 
             } else if (scrollState.matches('fetchingMore')) {
-                // FIX: Send event object
                 send({ type: 'FETCH_SUCCESS' });
             }
         }
         
-        // Error handling (if SWR returns an error while fetching)
         if (error && scrollState.matches('fetchingMore')) {
-            // This event already had a data payload, but ensure type is in the object
             send({ type: 'FETCH_FAILURE', data: error.message });
         }
         
     }, [isLoadingMore, isReachingEnd, scrollState, send, error, isLoadingInitialData]);
 
 
-    // --- EFFECT 2: Scroll Detection Logic (Fixed send call and cleanup fix) ---
+    // --- EFFECT 2: Scroll Detection Logic ---
     useEffect(() => {
         const targetElement = loadMoreRef.current;
         
-        // Only observe if we are in the 'ready' state and not at the end
         const shouldObserve = scrollState.matches('ready') && !isReachingEnd && targetElement;
         
         if (!shouldObserve) {
@@ -73,9 +69,7 @@ const Home = () => {
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
-                    // FIX: Send event object
                     send({ type: 'LOAD_MORE' }); 
-                    // Tell SWR to fetch the next page
                     setSize(size + 1); 
                 }
             },
@@ -84,9 +78,8 @@ const Home = () => {
 
         observer.observe(targetElement);
 
-        // Cleanup: Disconnects the observer when dependencies change or component unmounts
         return () => {
-            if (observer) {
+            if (observer && targetElement) {
                 observer.unobserve(targetElement);
             }
         };
@@ -96,7 +89,6 @@ const Home = () => {
 
     // --- Render Logic ---
 
-    // 1. Initial Loading/Error Handling
     if (error && isLoadingInitialData) {
         return <div style={{ color: 'yellow', padding: '20px', backgroundColor: '#212529', minHeight: '100vh' }}>Failed to load initial anime data: {error.message}</div>;
     }
@@ -128,6 +120,7 @@ const Home = () => {
 
                             return (
                                 <Link
+                                    className={'anime-gallery-item'} // Class enables pop-out effect
                                     key={anime.mal_id}
                                     to={`/anime/${anime.mal_id}`}
                                     state={{ animeData: anime }} 
@@ -141,10 +134,8 @@ const Home = () => {
                                         textDecoration: 'none', 
                                         color: '#f8f9fa', 
                                         transition: 'box-shadow 0.2s',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.5)' 
+                                        // Removed inline hover handlers to let CSS take over
                                     }}
-                                    onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.8)'}
-                                    onMouseOut={e => e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.5)'}
                                 >
                                     <img
                                         src={imageUrl}

@@ -1,98 +1,41 @@
-import React, { useState } from 'react';
-// 1. Import useMachine hook from XState
-import { useMachine } from '@xstate/react'; 
-// 2. Import the XState machine definition
-import { loginMachine } from './../stateMachines/loginMachine'; 
-
-// NOTE: Ensure you have imported Bootstrap CSS in your main entry file (e.g., main.jsx)
+import React from 'react';
+import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
+// FIX 1: Using 'react-router' as per your configuration
+import { Navigate } from 'react-router'; 
 
 const Login = () => {
-    
-    // --- State Initialization (Local Input State remains) ---
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    
-    // 3. Initialize the XState machine
-    const [current, send] = useMachine(loginMachine);
 
-    // --- Derived States for UI ---
-    // Extract state for conditional rendering
-    const isLoading = current.matches('loading');
-    const isSuccess = current.matches('success');
-    const isFailure = current.matches('failure');
-
-    // Extract context for displaying results/errors
-    const { error, token } = current.context;
-
-    // --- Function to handle form submission ---
-    const handleSubmit = (e) => {
-        e.preventDefault(); 
-
-        if (!username || !password) {
-            // Handle client-side validation failure if required
-            console.log('Please enter username and password');
-            return;
-        } 
-        
-        // 4. Trigger the LOGIN event in the machine
-        // The machine's 'idle' state will catch this event, store the credentials, 
-        // and transition to 'loading', which invokes your loginUser service.
-        send({
-            type: 'LOGIN',
-            username: username,
-            password: password,
-        });
-
-        // We leave the fields populated until the login is done or explicitly cleared later
-        // setUsername('');
-        // setPassword('');
+    const signInContainerStyle = {
+        maxWidth: '400px',
+        margin: '50px auto',
+        padding: '30px',
+        backgroundColor: '#343a40',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
     };
-
+    
     return (
-        <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc' }}>
-            <h2>User Login</h2>
-
-            {/* 5. Display Feedback based on XState */}
-            {isLoading && <div style={{ color: 'blue' }}>Authenticating...</div>}
+        <div style={{ backgroundColor: '#212529', minHeight: '100vh', paddingTop: '1px' }}>
             
-            {isFailure && (
-                <div style={{ color: 'red' }}>
-                    Login Failed: {error}
-                    <button onClick={() => send('RETRY')} style={{ marginLeft: '10px' }}>
-                        Retry
-                    </button>
+            {/* 1. CHECK AUTHENTICATION STATUS */}
+            {/* If the user is signed in, immediately redirect them to /home */}
+            <SignedIn>
+                <Navigate to="/home" replace={true} />
+            </SignedIn>
+            
+            {/* If the user is signed out, render the sign-in form */}
+            <SignedOut>
+                <div style={signInContainerStyle}>
+                    {/* 2. RENDER THE FULL SIGN-IN FORM */}
+                    <SignIn 
+                        // Tells Clerk that the component is mounted at this path
+                        path="/login" 
+                        // FIX 2: Explicitly set redirection URLs
+                        afterSignInUrl="/home"
+                        afterSignUpUrl="/home" 
+                    />
                 </div>
-            )}
-
-            {isSuccess && (
-                <div style={{ color: 'green' }}>
-                    Login Successful! Token: {token}
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-                <label>Username</label>
-                <input 
-                    type='text' 
-                    id='username' 
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)}
-                    disabled={isLoading || isSuccess} // Disable inputs while loading or on success
-                /><br />
-                
-                <label>Password</label>
-                <input 
-                    type='password' 
-                    id='password' 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading || isSuccess} // Disable inputs while loading or on success
-                /><br />
-                
-                <button type="submit" disabled={isLoading || isSuccess}>
-                    {isLoading ? 'Processing...' : 'Login'}
-                </button>
-            </form>
+            </SignedOut>
         </div>
     );
 };

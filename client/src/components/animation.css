@@ -1,0 +1,29 @@
+/* ========================================================
+   1. BASE STYLES: Defines the standard look and transition
+   ======================================================== */
+.anime-gallery-item { 
+    /* This ensures a smooth visual transition for scale and shadow */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
+    
+    /* Ensure the link container behaves like a proper block for styling */
+    display: block; 
+    
+    cursor: pointer;
+    
+    /* Set a small initial shadow that is always present */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+/* ========================================================
+   2. HOVER EFFECT: Scale up and lift on hover
+   ======================================================== */
+.anime-gallery-item:hover {
+    /* Scales the element up by 5% */
+    transform: scale(1.05); 
+    
+    /* Increases the shadow intensity to make it appear lifted */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7); 
+    
+    /* Ensure the element stays above others during the hover */
+    z-index: 10; 
+}
